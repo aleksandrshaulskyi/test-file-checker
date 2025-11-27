@@ -1,0 +1,90 @@
+
+
+
+
+
+
+
+
+services:
+  postgresql:
+    container_name: postgresql
+    image: postgres:17
+    expose:
+      - 5432
+    env_file: ./checker-backend/.env
+    volumes:
+      - checker_data:/var/lib/postgresql/data
+  django:
+    container_name: django
+    build: ./checker-backend
+    expose:
+      - 8000
+    env_file: ./checker-backend/.env
+    volumes:
+      - ./checker-backend:/checker-backend
+      - ./checker-backend/staticfiles:/checker-backend/staticfiles
+    restart: unless-stopped
+    depends_on:
+      - postgresql
+    command: sh -c 'python manage.py collectstatic --noinput && python manage.py migrate && gunicorn main.wsgi:application --bind 0.0.0.0:8000'
+  nginx:
+    container_name: nginx
+    image: nginx:1.27-alpine
+    ports:
+      - '80:80'
+    env_file: ./checker-backend/.env
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./checker-backend/staticfiles:/checker-backend/staticfiles:ro
+      - frontend_dist:/usr/share/nginx/html
+    restart: unless-stopped
+    depends_on:
+      - django
+      - postgresql
+      - frontend
+  celery:
+    container_name: celery
+    build: ./checker-backend
+    env_file: ./checker-backend/.env
+    depends_on:
+      - redis
+      - django
+    volumes:
+      - ./checker-backend:/checker-backend
+    command: celery -A main worker -l info
+  celery-beat:
+    container_name: celery-beat
+    build: ./checker-backend
+    env_file: ./checker-backend/.env
+    volumes:
+        - ./checker-backend:/checker-backend
+    depends_on:
+        - redis
+        - django
+    command: celery -A main beat -l info
+  redis:
+    container_name: redis
+    image: redis:7
+    expose:
+      - 6379
+    env_file: ./checker-backend/.env
+  garbage-collector:
+    container_name: garbage-collector
+    build: ./checker-backend
+    volumes:
+      - ./checker-backend/file_storage:/checker-backend/file_storage
+    depends_on:
+      - django
+    command: sh -c 'python -u manage.py collect_garbage'
+  frontend:
+    container_name: frontend
+    build: ./checker-frontend
+    volumes:
+      - frontend_dist:/checker-frontend/dist
+    command: sh -c 'echo "Frontend built" && sleep infinity'
+
+volumes:
+  checker_data:
+  staticfiles:
+  frontend_dist:
