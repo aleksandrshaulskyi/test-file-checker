@@ -27,6 +27,7 @@ class CheckFileService:
         self.file = self.get_file(id=id)
         self.check_status = None
         self.results = None
+        self.check = None
 
     def execute(self) -> None:
         """
@@ -75,7 +76,7 @@ class CheckFileService:
         """
         Create an instance of Check and store to the database.
         """
-        Check.objects.create(status=self.check_status, file=self.file, results=self.results)
+        self.check = Check.objects.create(status=self.check_status, file=self.file, results=self.results)
 
     def update_file(self) -> None:
         """
@@ -86,6 +87,7 @@ class CheckFileService:
         else:
             self.file.last_check_status = FileStatus.CHECK_FAILED
         
+        self.file.checking_required = False
         self.file.last_checked_at = timezone.now()
 
         self.file.save(update_fields=['last_checked_at', 'last_check_status'])
@@ -96,9 +98,12 @@ class CheckFileService:
         """
         email = self.file.user.email
 
-        send_mail(
+        sent = send_mail(
             subject='Check results.',
             message=f'Your file was checked.\nThe check was {self.check_status}.\nResults:\n{self.results}',
             from_email=app_settings.application_email,
             recipient_list=[email],
         )
+
+        self.check.email_sent = bool(sent)
+        self.check.save(update_fields=['email_sent'])

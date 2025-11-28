@@ -29,6 +29,11 @@ class Check(models.Model):
         verbose_name='Результаты проверки.',
     )
 
+    email_sent = models.BooleanField(
+        default=False,
+        verbose_name='Письмо отправлено?',
+    )
+
     class Meta:
         verbose_name = 'Check'
         verbose_name_plural = 'Checks'
