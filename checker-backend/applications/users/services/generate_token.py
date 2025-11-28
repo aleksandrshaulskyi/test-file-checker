@@ -53,7 +53,7 @@ class GenerateActivationLinkService:
         """
         uid = urlsafe_base64_encode(force_bytes(self.user.id))
         self.token = email_token_generator.make_token(user=self.user)
-        self.link = f'http://localhost/users/verify-email/?uid={uid}&token={self.token}'
+        self.link = f'http://shaulskyi.com/api/users/verify-email/?uid={uid}&token={self.token}'
 
     def send_link(self) -> None:
         """
