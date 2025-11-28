@@ -9,7 +9,7 @@ class ListCheckSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Check
-        fields = ('status', 'datetime', 'results')
+        fields = ('status', 'datetime', 'results', 'email_sent')
 
     def to_representation(self, instance: Check) -> dict:
         representation = super().to_representation(instance=instance)

@@ -7,5 +7,6 @@ export interface IFileInterface {
         status: string
         datetime: string
         results: string
+        email_sent: boolean
     }>
 }
