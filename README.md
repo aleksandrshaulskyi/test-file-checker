@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 # Test-file-checker.
 
 The application that allows you to run online flake8 validation of your python files.
@@ -51,5 +43,27 @@ That is it. Application will be accessible on **http://localhost/**
     A new file sent to this endpoint will be bound to an existing entity. All previous checks will be deleted
     and new one will be ran upon upload.
 
-    Everythin else works as requests. Files are loaded when accessing the index page (if logged in). Checks will be done both on upload and update a File.
+    Everything else works as requests. Files are loaded when accessing the index page (if logged in). Checks will be done both on upload and update a File.
     An email will be sent upon the check completion.
+
+## Additional.
+
+Every additional task is completed.
+
+1) Created testing scaffolding with Pytest. In order to run execute:  
+    - ```docker exec -it django bash```
+    - ```pytest```
+
+2) Email verification implemented. Upon registration a user is created as inactive (is_active flag is set to False).  
+   A custom link that contains a one-time token is the generated and sent to a user email address.  
+   After user requests such link his profile is switched to active.  
+   Login is disabled for the inactive users.  
+
+3) A completely separated process runs in a different container to collect garbage (unbound files in storage.)  
+   This allows us to do the scheduled task in a fancy way avoid the need of manipulating Gunicorn workers
+   in order to prevent forked workers from executing the same job. It is also fancier than running such task in a different
+   thread.
+
+   Aside that, a normal celery task is scheduled to run every hour to do exactly same thing.
+
+4) All the variables are stored in the .env file and accessed using Pydantic settings module.
