@@ -2,6 +2,12 @@
 
 The application that allows you to run online flake8 validation of your python files.
 
+## Test tast doc link.
+
+Here is the link to the google doc file.
+
+https://docs.google.com/document/d/1hLjb_WhzZM7hkvmde6O2pIP8JuQWdnAShkMmsrQcfSs/edit?usp=sharing
+
 ## Disclaimer.
 
 Frontend is not optimized. It will not handle errors or pending state of requests.
