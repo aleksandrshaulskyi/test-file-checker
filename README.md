@@ -11,7 +11,7 @@ Was developed and tested only in Chrome on MacOS 26.
 
 ## Test yorself.
 
-http://shaulskyi.com
+http://shaulskyi.com/register/
 
 ## Test locally.
 
