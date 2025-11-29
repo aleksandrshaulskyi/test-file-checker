@@ -218,7 +218,7 @@ export function Index(): ReactElement {
                                         </div>
 
                                         <div className='text-sm'>
-                                            <span className='font-medium text-gray-700'>Email was sent?</span> {check.email_sent}
+                                            <span className='font-medium text-gray-700'>Email was sent?</span> {check.email_sent ? 'Yes' : 'No'}
                                         </div>
 
                                         <div className='text-sm'>
